@@ -123,28 +123,40 @@
       .nav-links li:last-child a { border-bottom: none; }
     }
 
-    /* ── COMING SOON ── */
-    .coming-soon {
-      min-height: calc(100vh - 60px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    /* ── SCHEDULE SECTION ── */
+    .schedule-section {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 2rem;
       text-align: center;
-      padding: 3rem 1.5rem;
     }
 
-    .coming-soon h1 {
+    .schedule-section h1 {
       font-family: 'Playfair Display', serif;
       font-size: clamp(2rem, 5vw, 3rem);
       color: var(--green-dark);
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
     }
 
-    .coming-soon p {
+    .schedule-intro {
       font-size: 1.1rem;
       color: var(--text-mid);
       font-weight: 300;
+      margin-bottom: 2rem;
+    }
+
+    .sheet-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      height: 760px;
+    }
+
+    .sheet-container iframe {
+      display: block;
+      margin-top: -35px;
+      height: 840px;
     }
 
     /* ── FOOTER ── */
@@ -177,9 +189,18 @@
     </ul>
   </nav>
 
-  <section class="coming-soon">
-    <h1>Schedule</h1>
-    <p>Coming Soon!</p>
+  <section class="schedule-section">
+    <h1>Camp Schedule</h1>
+    <p class="schedule-intro">See who's at camp and when. Updated automatically.</p>
+    <div class="sheet-container">
+      <iframe
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQEgzWMwYxjojq_yjFbr2tgpGh-IfmjxHC6J1y3MgHWPYuAumAqINxTmNpV-o49gA/pubhtml?widget=true&headers=false"
+        width="100%"
+        height="800"
+        frameborder="0">
+        Loading…
+      </iframe>
+    </div>
   </section>
 
   <footer>
