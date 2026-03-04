@@ -1,6 +1,9 @@
 # Planning docs (private)
 PLANNING.md
 
+# Data files (source databases, reference images)
+data/
+
 # Claude Code local files
 .claude/
 

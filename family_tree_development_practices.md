@@ -81,6 +81,54 @@ const genColors = [
 
 ---
 
+## Weighted Wedge Sizing (Gen 2+)
+
+Wedge sizes are proportional to descendant count, not equal divisions. This ensures people with large family trees get enough space for future generations.
+
+**Algorithm:**
+```javascript
+weight = Math.max(descendantCount + 1, MIN_WEIGHT)  // MIN_WEIGHT = 8
+angleShare = (weight / totalWeight) * parentSpanDegrees
+```
+
+**Example (Roland's branch, 90°):**
+| Person | Descendants | Weight | Angle |
+|--------|-------------|--------|-------|
+| Ted Richardson | 15 | 16 | 21.8° |
+| Betsy Richardson | 1 | 8 (min) | 10.9° |
+| Althea Richardson | 23 | 24 | 32.7° |
+| Emily Richardson | 17 | 18 | 24.5° |
+
+MIN_WEIGHT ensures even people with few descendants get readable wedges.
+
+---
+
+## Unsolved: Stacked Tangential Text
+
+**The problem:** For narrow wedges (under ~15°), radial text doesn't fit. We need tangential text (running along the arc) that stacks vertically:
+- Blood relative name (inner)
+- m.
+- Spouse name (outer)
+
+**What we tried:**
+1. Three separate SVG text elements at different radii, same angle, same tangent rotation
+2. Various rotation calculations: `angle`, `angle + 90°`, `angle - 90°`
+3. Different positioning: inner edge, outer edge, middle
+
+**What went wrong:**
+- Text appeared on a single line rather than stacking
+- Text bled outside the wedge boundaries
+- Rotation math may be incorrect for tangent direction in D3's coordinate system
+
+**Possible issues to investigate:**
+1. SVG text rotation behavior - does `rotate(θ, x, y)` behave as expected?
+2. D3's coordinate system offset (-90° from standard math)
+3. Whether tangential text stacking requires different approach (e.g., `<textPath>` along arcs?)
+
+**Reference:** See `data/different_wedge_size_reference.png` for visual mockup of desired behavior.
+
+---
+
 ## Questions to Clarify
 
 1. **Divorcees/Remarriages:** How should we handle Coombs (divorced Henry LaBoiteaux, remarried)? Show both spouses? Show only current? Special notation?
