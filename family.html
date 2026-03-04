@@ -213,11 +213,22 @@
     };
 
     // Generation 1 children in clockwise order from top-right
+    // spouses array: order matters (first marriage first)
     const gen1Children = [
-      { id: "2", name: "Roland Richardson", spouse: "Althea Ford", startAngle: 0, endAngle: 90 },
-      { id: "5", name: "Emily Richardson", spouse: "Clarence Burton", startAngle: 90, endAngle: 180 },
-      { id: "4", name: "Coombs Richardson", spouse: "Henry LaBoiteaux", startAngle: 180, endAngle: 270 },
-      { id: "3", name: "Adelaide Richardson", spouse: "Hugh Garvin", startAngle: 270, endAngle: 360 }
+      { id: "2", name: "Roland Richardson", spouses: [
+        { name: "Althea Ford", order: 1 }
+      ], startAngle: 0, endAngle: 90 },
+      { id: "5", name: "Emily Richardson", spouses: [
+        { name: "Clarence Burton", order: 1 },
+        { name: "Jim Carruthers", order: 2 }
+      ], startAngle: 90, endAngle: 180 },
+      { id: "4", name: "Coombs Richardson", spouses: [
+        { name: "Henry LaBoiteaux", order: 1 },
+        { name: "Robert Fillmore Lovett", order: 2 }
+      ], startAngle: 180, endAngle: 270 },
+      { id: "3", name: "Adelaide Richardson", spouses: [
+        { name: "Hugh Garvin", order: 1 }
+      ], startAngle: 270, endAngle: 360 }
     ];
 
     // Set up SVG
@@ -323,14 +334,15 @@
         rotation += 180;
       }
 
-      // Blood relative closest to center, spouse furthest from center
-      // When flipped, we need to swap the offsets visually
-      const innerOffset = isFlipped ? 18 : -18;
-      const outerOffset = isFlipped ? -18 : 18;
+      // Blood relative ALWAYS closest to center (negative offset = toward center)
+      // Spouse ALWAYS furthest from center (positive offset = toward outer edge)
+      // Text rotation handles readability, but radial position stays consistent
+      const bloodRelativeOffset = -18;
+      const spouseOffset = 18;
 
       // Richardson child name (closest to center/previous generation)
-      const nameX = Math.cos(midAngle) * (textRadius + innerOffset);
-      const nameY = Math.sin(midAngle) * (textRadius + innerOffset);
+      const nameX = Math.cos(midAngle) * (textRadius + bloodRelativeOffset);
+      const nameY = Math.sin(midAngle) * (textRadius + bloodRelativeOffset);
 
       g.append("text")
         .attr("x", nameX)
@@ -357,8 +369,8 @@
         .text("m.");
 
       // Spouse name (furthest from center)
-      const spouseX = Math.cos(midAngle) * (textRadius + outerOffset);
-      const spouseY = Math.sin(midAngle) * (textRadius + outerOffset);
+      const spouseX = Math.cos(midAngle) * (textRadius + spouseOffset);
+      const spouseY = Math.sin(midAngle) * (textRadius + spouseOffset);
 
       g.append("text")
         .attr("x", spouseX)
@@ -369,7 +381,7 @@
         .attr("font-size", config.fontSize)
         .attr("fill", "#1a2e1e")
         .attr("transform", `rotate(${rotation}, ${spouseX}, ${spouseY})`)
-        .text(child.spouse);
+        .text(child.spouses[0].name);
     });
 
     // Scroll to center on load
