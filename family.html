@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -123,28 +124,40 @@
       .nav-links li:last-child a { border-bottom: none; }
     }
 
-    /* ── COMING SOON ── */
-    .coming-soon {
-      min-height: calc(100vh - 60px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    /* ── FAMILY WHEEL ── */
+    .family-header {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background: var(--cream);
+      padding: 1rem 2rem;
       text-align: center;
-      padding: 3rem 1.5rem;
+      z-index: 100;
+      border-bottom: 1px solid rgba(30, 77, 43, 0.12);
     }
 
-    .coming-soon h1 {
+    .family-header h1 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3rem);
+      font-size: 1.5rem;
       color: var(--green-dark);
-      margin-bottom: 1rem;
+      margin-bottom: 0.25rem;
     }
 
-    .coming-soon p {
-      font-size: 1.1rem;
+    .family-header .subtitle {
+      font-size: 0.9rem;
       color: var(--text-mid);
       font-weight: 300;
+    }
+
+    .wheel-canvas {
+      padding-top: 120px;
+      overflow: visible;
+    }
+
+    #family-wheel {
+      display: block;
+      background: white;
     }
 
     /* ── FOOTER ── */
@@ -177,13 +190,198 @@
     </ul>
   </nav>
 
-  <section class="coming-soon">
-    <h1>Family</h1>
-    <p>Coming Soon!</p>
-  </section>
+  <header class="family-header">
+    <h1>The Richardson Family Circle</h1>
+    <p class="subtitle">204 descendants across 6 generations · Scroll to explore</p>
+  </header>
+
+  <div class="wheel-canvas">
+    <svg id="family-wheel"></svg>
+  </div>
+
+  <script>
+    // Configuration
+    const config = {
+      width: 2000,
+      height: 2000,
+      centerX: 1000,
+      centerY: 1000,
+      centerRadius: 120,
+      ringWidth: 140,
+      fontSize: 14,
+      centerFontSize: 16
+    };
+
+    // Generation 1 children in clockwise order from top-right
+    const gen1Children = [
+      { id: "2", name: "Roland Richardson", spouse: "Althea Ford", startAngle: 0, endAngle: 90 },
+      { id: "5", name: "Emily Richardson", spouse: "Clarence Burton", startAngle: 90, endAngle: 180 },
+      { id: "4", name: "Coombs Richardson", spouse: "Henry LaBoiteaux", startAngle: 180, endAngle: 270 },
+      { id: "3", name: "Adelaide Richardson", spouse: "Hugh Garvin", startAngle: 270, endAngle: 360 }
+    ];
+
+    // Set up SVG
+    const svg = d3.select("#family-wheel")
+      .attr("width", config.width)
+      .attr("height", config.height)
+      .attr("viewBox", `0 0 ${config.width} ${config.height}`);
+
+    // Create main group centered
+    const g = svg.append("g")
+      .attr("transform", `translate(${config.centerX}, ${config.centerY})`);
+
+    // ══════════════════════════════════════════════
+    // CENTER CIRCLE
+    // ══════════════════════════════════════════════
+    g.append("circle")
+      .attr("r", config.centerRadius)
+      .attr("fill", "none")
+      .attr("stroke", "#1a2e1e")
+      .attr("stroke-width", 2);
+
+    // Center text
+    g.append("text")
+      .attr("y", -12)
+      .attr("text-anchor", "middle")
+      .attr("font-family", "Playfair Display, serif")
+      .attr("font-size", config.centerFontSize)
+      .attr("font-weight", "bold")
+      .attr("fill", "#1a2e1e")
+      .text("James Clement Richardson Jr.");
+
+    g.append("text")
+      .attr("y", 6)
+      .attr("text-anchor", "middle")
+      .attr("font-family", "Playfair Display, serif")
+      .attr("font-size", 12)
+      .attr("font-style", "italic")
+      .attr("fill", "#1a2e1e")
+      .text("m.");
+
+    g.append("text")
+      .attr("y", 24)
+      .attr("text-anchor", "middle")
+      .attr("font-family", "Playfair Display, serif")
+      .attr("font-size", config.centerFontSize)
+      .attr("font-weight", "bold")
+      .attr("fill", "#1a2e1e")
+      .text("Sarah Annis Withenbury");
+
+    // ══════════════════════════════════════════════
+    // GENERATION 1 RING
+    // ══════════════════════════════════════════════
+    const gen1Inner = config.centerRadius;
+    const gen1Outer = config.centerRadius + config.ringWidth;
+
+    // Outer circle for Gen 1
+    g.append("circle")
+      .attr("r", gen1Outer)
+      .attr("fill", "none")
+      .attr("stroke", "#1a2e1e")
+      .attr("stroke-width", 2);
+
+    // Arc generator for wedges
+    const arc = d3.arc()
+      .innerRadius(gen1Inner)
+      .outerRadius(gen1Outer);
+
+    // Draw wedges and labels for Gen 1
+    gen1Children.forEach(child => {
+      // Convert degrees to radians (D3 uses radians, 0 = top)
+      // Subtract 90 degrees because D3's 0 is at 3 o'clock, we want 12 o'clock
+      const startRad = (child.startAngle - 90) * Math.PI / 180;
+      const endRad = (child.endAngle - 90) * Math.PI / 180;
+
+      // Draw divider line at start of wedge
+      const lineAngle = startRad;
+      const x1 = Math.cos(lineAngle) * gen1Inner;
+      const y1 = Math.sin(lineAngle) * gen1Inner;
+      const x2 = Math.cos(lineAngle) * gen1Outer;
+      const y2 = Math.sin(lineAngle) * gen1Outer;
+
+      g.append("line")
+        .attr("x1", x1)
+        .attr("y1", y1)
+        .attr("x2", x2)
+        .attr("y2", y2)
+        .attr("stroke", "#1a2e1e")
+        .attr("stroke-width", 1);
+
+      // Calculate center angle for text placement
+      const midAngle = (startRad + endRad) / 2;
+      const textRadius = (gen1Inner + gen1Outer) / 2;
+      const textX = Math.cos(midAngle) * textRadius;
+      const textY = Math.sin(midAngle) * textRadius;
+
+      // Calculate rotation for radial text
+      // Text should be readable (not upside down)
+      let rotation = (midAngle * 180 / Math.PI) + 90;
+
+      // Flip text on bottom half so it's readable
+      const isFlipped = midAngle > 0 && midAngle < Math.PI;
+      if (isFlipped) {
+        rotation += 180;
+      }
+
+      // Blood relative closest to center, spouse furthest from center
+      // When flipped, we need to swap the offsets visually
+      const innerOffset = isFlipped ? 18 : -18;
+      const outerOffset = isFlipped ? -18 : 18;
+
+      // Richardson child name (closest to center/previous generation)
+      const nameX = Math.cos(midAngle) * (textRadius + innerOffset);
+      const nameY = Math.sin(midAngle) * (textRadius + innerOffset);
+
+      g.append("text")
+        .attr("x", nameX)
+        .attr("y", nameY)
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "middle")
+        .attr("font-family", "Playfair Display, serif")
+        .attr("font-size", config.fontSize)
+        .attr("fill", "#1a2e1e")
+        .attr("transform", `rotate(${rotation}, ${nameX}, ${nameY})`)
+        .text(child.name);
+
+      // "m." in italics (middle)
+      g.append("text")
+        .attr("x", textX)
+        .attr("y", textY)
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "middle")
+        .attr("font-family", "Playfair Display, serif")
+        .attr("font-size", config.fontSize - 2)
+        .attr("font-style", "italic")
+        .attr("fill", "#1a2e1e")
+        .attr("transform", `rotate(${rotation}, ${textX}, ${textY})`)
+        .text("m.");
+
+      // Spouse name (furthest from center)
+      const spouseX = Math.cos(midAngle) * (textRadius + outerOffset);
+      const spouseY = Math.sin(midAngle) * (textRadius + outerOffset);
+
+      g.append("text")
+        .attr("x", spouseX)
+        .attr("y", spouseY)
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "middle")
+        .attr("font-family", "Playfair Display, serif")
+        .attr("font-size", config.fontSize)
+        .attr("fill", "#1a2e1e")
+        .attr("transform", `rotate(${rotation}, ${spouseX}, ${spouseY})`)
+        .text(child.spouse);
+    });
+
+    // Scroll to center on load
+    window.addEventListener('load', () => {
+      const centerX = config.centerX - window.innerWidth / 2;
+      const centerY = config.centerY - window.innerHeight / 2 + 60;
+      window.scrollTo(centerX, centerY);
+    });
+  </script>
 
   <footer>
-    <p>Treasure Island Camp &middot; Pointe au Baril, Ontario &middot; Est. 1926</p>
+    <p>Treasure Island Camp · Pointe au Baril, Ontario · Est. 1926</p>
   </footer>
 
 </body>
