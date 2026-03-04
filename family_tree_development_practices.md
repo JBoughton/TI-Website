@@ -46,29 +46,38 @@ The family tree contains TWO people named Emily Richardson:
    - Married: Joe Boughton (ancestor of the Boughton family)
 
 ### Data source
-Primary data source: `data/Richardson Family Circle Data.rmgc` (SQLite database extracted from `family_wheel.rmgb`)
+Primary data source: **`data/family_tree.json`** (extracted from RootsMagic database)
+- Clean, readable JSON with Gen 0, 1, and 2 fully populated
+- IDs match PersonID in original `Richardson Family Circle Data.rmgc` SQLite database
+- For Gen 3+, extract more data from the .rmgc file using sqlite3 queries
+
+Original source: `data/Richardson Family Circle Data.rmgc` (SQLite database)
 - More reliable than PDF for relationship data
 - Contains proper parent-child linkages and marriage records
 
 ---
 
-## Color Ramp Options (for generation coloring)
+## Color Ramp (for generation coloring)
 
-**Option 1: Forest depth** (selected)
-- Center → outer: Deep forest → emerald → teal → sage → seafoam → mint
-- Stays in green/nature family, extends naturally, on-brand with camp theme
+**Current implementation:** Light pastels at 60% opacity with dark text (#1a2e1e)
+```javascript
+const genColors = [
+  "rgba(135, 206, 235, 0.6)", // Gen 0 (center) - Sky blue
+  "rgba(255, 215, 100, 0.6)", // Gen 1 - Gold
+  "rgba(255, 100, 100, 0.6)", // Gen 2 - Light red
+  "rgba(152, 251, 152, 0.6)", // Gen 3 - Pale green
+  "rgba(200, 162, 200, 0.6)", // Gen 4 - Lavender
+  "rgba(255, 160, 122, 0.6)", // Gen 5 - Light coral
+  "rgba(127, 255, 212, 0.6)", // Gen 6 - Aquamarine
+  "rgba(240, 230, 140, 0.6)"  // Gen 7+ - Khaki/pale yellow
+];
+```
 
-**Option 2: Earth to sky**
-- Center → outer: Deep brown → terracotta → amber → sage → sky blue → lavender
-- Grounds ancestors in earth, newer generations reach toward sky
-
-**Option 3: Cool to warm**
-- Center → outer: Deep navy → indigo → purple → magenta → coral → gold
-- Classic, very extensible, works well with white text
-
-**Option 4: Categorical**
-- Use a palette like D3's Tableau10 - each generation is a completely different hue
-- Maximum distinction, but less "ramp" feeling
+**Rejected alternatives (too dark/aggressive):**
+- Forest depth: Deep forest → emerald → teal → sage → seafoam → mint
+- Earth to sky: Deep brown → terracotta → amber → sage → sky blue → lavender
+- Cool to warm: Deep navy → indigo → purple → magenta → coral → gold
+- Categorical (Tableau10): Each generation completely different hue
 
 ---
 

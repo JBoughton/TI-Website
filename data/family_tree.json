@@ -1,0 +1,256 @@
+{
+  "meta": {
+    "source": "Richardson Family Circle Data.rmgc (RootsMagic SQLite)",
+    "extracted": "2026-03-04",
+    "notes": "IDs match PersonID in the original database. descendantCount = total descendants (children + grandchildren + ...)"
+  },
+  "gen0": {
+    "id": "1",
+    "couple": {
+      "husband": { "id": 12, "name": "James Clement Richardson Jr." },
+      "wife": { "id": 1, "name": "Sarah Annis Withenbury" }
+    },
+    "familyId": 1
+  },
+  "gen1": [
+    {
+      "id": 2,
+      "name": "Roland Richardson",
+      "sex": "M",
+      "parentFamilyId": 1,
+      "descendantCount": 56,
+      "spouses": [
+        { "id": 6, "name": "Althea Ford", "order": 1, "familyId": 2 }
+      ],
+      "quadrant": { "startAngle": 0, "endAngle": 90 }
+    },
+    {
+      "id": 5,
+      "name": "Emily Richardson",
+      "sex": "F",
+      "parentFamilyId": 1,
+      "descendantCount": 19,
+      "spouses": [
+        { "id": 9, "name": "Clarence Burton", "order": 1, "familyId": 5 },
+        { "id": 11, "name": "Jim Carruthers", "order": 2, "familyId": 7 }
+      ],
+      "quadrant": { "startAngle": 90, "endAngle": 180 }
+    },
+    {
+      "id": 4,
+      "name": "Coombs Richardson",
+      "sex": "F",
+      "parentFamilyId": 1,
+      "descendantCount": 51,
+      "spouses": [
+        { "id": 8, "name": "Henry LaBoiteaux", "order": 1, "familyId": 4 },
+        { "id": 10, "name": "Robert Fillmore Lovett", "order": 2, "familyId": 6 }
+      ],
+      "quadrant": { "startAngle": 180, "endAngle": 270 }
+    },
+    {
+      "id": 3,
+      "name": "Adelaide Richardson",
+      "sex": "F",
+      "parentFamilyId": 1,
+      "descendantCount": 57,
+      "spouses": [
+        { "id": 7, "name": "Hugh Garvin", "order": 1, "familyId": 3 }
+      ],
+      "quadrant": { "startAngle": 270, "endAngle": 360 }
+    }
+  ],
+  "gen2": [
+    {
+      "_comment": "=== ROLAND RICHARDSON & ALTHEA FORD (familyId: 2) ===",
+      "_parentBranch": "Roland"
+    },
+    {
+      "id": 13,
+      "name": "Ted Richardson",
+      "sex": "M",
+      "parentFamilyId": 2,
+      "childOrder": 1,
+      "descendantCount": 15,
+      "spouses": [
+        { "id": 28, "name": "Priscilla Grandin", "order": 1, "familyId": 8 }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Betsy Richardson",
+      "sex": "F",
+      "parentFamilyId": 2,
+      "childOrder": 2,
+      "descendantCount": 1,
+      "spouses": [
+        { "id": 29, "name": "George Kurlin", "order": 1, "familyId": 9 }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Althea Richardson",
+      "sex": "F",
+      "parentFamilyId": 2,
+      "childOrder": 3,
+      "descendantCount": 23,
+      "spouses": [
+        { "id": 30, "name": "John Mathers McCaslin", "order": 1, "familyId": 10 },
+        { "id": 31, "name": "Jim Surface", "order": 2, "familyId": 11 }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Emily Richardson",
+      "sex": "F",
+      "parentFamilyId": 2,
+      "childOrder": 4,
+      "descendantCount": 17,
+      "spouses": [
+        { "id": 32, "name": "Joe Boughton", "order": 1, "familyId": 12 }
+      ]
+    },
+    {
+      "_comment": "=== ADELAIDE RICHARDSON & HUGH GARVIN (familyId: 3) ===",
+      "_parentBranch": "Adelaide"
+    },
+    {
+      "id": 17,
+      "name": "James Garvin",
+      "sex": "M",
+      "parentFamilyId": 3,
+      "childOrder": 1,
+      "descendantCount": 13,
+      "spouses": [
+        { "id": 45, "name": "Frances Harrison", "order": 1, "familyId": 13 },
+        { "id": 152, "name": "Jean Strang", "order": 2, "familyId": 44 },
+        { "id": 153, "name": "Gladys Sutravafa Randall", "order": 3, "familyId": 45 }
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Hugh Garvin",
+      "sex": "M",
+      "parentFamilyId": 3,
+      "childOrder": 2,
+      "descendantCount": 11,
+      "spouses": [
+        { "id": 50, "name": "Jane Hamilton", "order": 1, "familyId": 14 }
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Annis Garvin",
+      "sex": "F",
+      "parentFamilyId": 3,
+      "childOrder": 3,
+      "descendantCount": 11,
+      "spouses": [
+        { "id": 54, "name": "Bob Welch", "order": 1, "familyId": 15 }
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Adelaide Garvin",
+      "sex": "F",
+      "parentFamilyId": 3,
+      "childOrder": 4,
+      "descendantCount": 10,
+      "spouses": [
+        { "id": 59, "name": "Bob Cohan", "order": 1, "familyId": 16 }
+      ]
+    },
+    {
+      "id": 21,
+      "name": "Frances Garvin",
+      "sex": "F",
+      "parentFamilyId": 3,
+      "childOrder": 5,
+      "descendantCount": 12,
+      "spouses": [
+        { "id": 64, "name": "William Byrne", "order": 1, "familyId": 17 }
+      ]
+    },
+    {
+      "_comment": "=== COOMBS RICHARDSON & HENRY LABOITEAUX (familyId: 4) ===",
+      "_parentBranch": "Coombs (1st marriage)"
+    },
+    {
+      "id": 22,
+      "name": "Emily LaBoiteaux",
+      "sex": "F",
+      "parentFamilyId": 4,
+      "childOrder": 1,
+      "descendantCount": 7,
+      "spouses": [
+        { "id": 69, "name": "Larry Mannion", "order": 1, "familyId": 18 }
+      ]
+    },
+    {
+      "id": 23,
+      "name": "Edith LaBoiteaux",
+      "sex": "F",
+      "parentFamilyId": 4,
+      "childOrder": 2,
+      "descendantCount": 17,
+      "spouses": [
+        { "id": 74, "name": "Thomas Bogardus", "order": 1, "familyId": 19 }
+      ]
+    },
+    {
+      "_comment": "=== COOMBS RICHARDSON & ROBERT FILLMORE LOVETT (familyId: 6) ===",
+      "_parentBranch": "Coombs (2nd marriage)"
+    },
+    {
+      "id": 83,
+      "name": "Robert Fillmore Lovett",
+      "sex": "M",
+      "parentFamilyId": 6,
+      "childOrder": 1,
+      "descendantCount": 8,
+      "spouses": [
+        { "id": 84, "name": "Sara C. Newcomb", "order": 1, "familyId": 21 }
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Linda Coombs Lovett",
+      "sex": "F",
+      "parentFamilyId": 6,
+      "childOrder": 2,
+      "descendantCount": 19,
+      "spouses": [
+        { "id": 88, "name": "James Crawford", "order": 1, "familyId": 22 }
+      ]
+    },
+    {
+      "_comment": "=== EMILY RICHARDSON & CLARENCE BURTON (familyId: 5) ===",
+      "_parentBranch": "Emily (1st marriage)"
+    },
+    {
+      "id": 26,
+      "name": "Mary Tylor Burton",
+      "sex": "F",
+      "parentFamilyId": 5,
+      "childOrder": 1,
+      "descendantCount": 19,
+      "spouses": [
+        { "id": 93, "name": "R.D. Garrison", "order": 1, "familyId": 23 },
+        { "id": 94, "name": "Richard P. Stewart", "order": 2, "familyId": 24 }
+      ]
+    },
+    {
+      "_comment": "=== EMILY RICHARDSON & JIM CARRUTHERS (familyId: 7) ===",
+      "_parentBranch": "Emily (2nd marriage)"
+    },
+    {
+      "id": 27,
+      "name": "Jimsy Carruthers",
+      "sex": "M",
+      "parentFamilyId": 7,
+      "childOrder": 1,
+      "descendantCount": 0,
+      "spouses": []
+    }
+  ]
+}

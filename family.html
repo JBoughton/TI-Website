@@ -297,6 +297,8 @@
       });
     });
 
+    // Note: Gen 2 people will be added after gen2Children is defined
+
     // ══════════════════════════════════════════════
     // CENTER CIRCLE
     // ══════════════════════════════════════════════
@@ -491,6 +493,148 @@
           .text(spouse.name);
       });
     });
+
+    // ══════════════════════════════════════════════
+    // GENERATION 2 RING
+    // ══════════════════════════════════════════════
+    const gen2Inner = gen1Outer;
+    const gen2RingWidth = 200; // wider than gen1 to fit tangential text
+    const gen2Outer = gen2Inner + gen2RingWidth;
+
+    // Gen 2 data with descendant counts (from family_tree.json)
+    // Angles will be calculated based on weight = descendantCount + 1
+    const gen2Data = [
+      // === ROLAND (0°-90°) - familyId 2 ===
+      { id: "13", name: "Ted Richardson", parentFamilyId: 2, descendantCount: 15,
+        spouses: [{ name: "Priscilla Grandin", order: 1 }] },
+      { id: "14", name: "Betsy Richardson", parentFamilyId: 2, descendantCount: 1,
+        spouses: [{ name: "George Kurlin", order: 1 }] },
+      { id: "15", name: "Althea Richardson", parentFamilyId: 2, descendantCount: 23,
+        spouses: [{ name: "John Mathers McCaslin", order: 1 }, { name: "Jim Surface", order: 2 }] },
+      { id: "16", name: "Emily Richardson", parentFamilyId: 2, descendantCount: 17,
+        spouses: [{ name: "Joe Boughton", order: 1 }] },
+
+      // === EMILY RICHARDSON - Burton (90°-135°) - familyId 5 ===
+      { id: "26", name: "Mary Tylor Burton", parentFamilyId: 5, descendantCount: 19,
+        spouses: [{ name: "R.D. Garrison", order: 1 }, { name: "Richard P. Stewart", order: 2 }] },
+      // === EMILY RICHARDSON - Carruthers (135°-180°) - familyId 7 ===
+      { id: "27", name: "Jimsy Carruthers", parentFamilyId: 7, descendantCount: 0,
+        spouses: [] },
+
+      // === COOMBS - LaBoiteaux (180°-225°) - familyId 4 ===
+      { id: "22", name: "Emily LaBoiteaux", parentFamilyId: 4, descendantCount: 7,
+        spouses: [{ name: "Larry Mannion", order: 1 }] },
+      { id: "23", name: "Edith LaBoiteaux", parentFamilyId: 4, descendantCount: 17,
+        spouses: [{ name: "Thomas Bogardus", order: 1 }] },
+      // === COOMBS - Lovett (225°-270°) - familyId 6 ===
+      { id: "83", name: "Robert Fillmore Lovett", parentFamilyId: 6, descendantCount: 8,
+        spouses: [{ name: "Sara C. Newcomb", order: 1 }] },
+      { id: "25", name: "Linda Coombs Lovett", parentFamilyId: 6, descendantCount: 19,
+        spouses: [{ name: "James Crawford", order: 1 }] },
+
+      // === ADELAIDE (270°-360°) - familyId 3 ===
+      { id: "17", name: "James Garvin", parentFamilyId: 3, descendantCount: 13,
+        spouses: [{ name: "Frances Harrison", order: 1 }, { name: "Jean Strang", order: 2 }, { name: "Gladys Sutravafa Randall", order: 3 }] },
+      { id: "18", name: "Hugh Garvin", parentFamilyId: 3, descendantCount: 11,
+        spouses: [{ name: "Jane Hamilton", order: 1 }] },
+      { id: "19", name: "Annis Garvin", parentFamilyId: 3, descendantCount: 11,
+        spouses: [{ name: "Bob Welch", order: 1 }] },
+      { id: "20", name: "Adelaide Garvin", parentFamilyId: 3, descendantCount: 10,
+        spouses: [{ name: "Bob Cohan", order: 1 }] },
+      { id: "21", name: "Frances Garvin", parentFamilyId: 3, descendantCount: 12,
+        spouses: [{ name: "William Byrne", order: 1 }] }
+    ];
+
+    // Parent family angular spans (from Gen 1 sub-wedges)
+    const familySpans = {
+      2: { start: 0, end: 90 },      // Roland & Althea Ford
+      5: { start: 90, end: 135 },    // Emily & Clarence Burton
+      7: { start: 135, end: 180 },   // Emily & Jim Carruthers
+      4: { start: 180, end: 225 },   // Coombs & Henry LaBoiteaux
+      6: { start: 225, end: 270 },   // Coombs & Robert Lovett
+      3: { start: 270, end: 360 }    // Adelaide & Hugh Garvin
+    };
+
+    // Calculate weighted angles for each family group
+    // Minimum weight ensures even people with few descendants get readable wedges
+    const MIN_WEIGHT = 8;
+
+    function calculateWeightedAngles(children, familySpan) {
+      const totalWeight = children.reduce((sum, c) => sum + Math.max(c.descendantCount + 1, MIN_WEIGHT), 0);
+      const spanDegrees = familySpan.end - familySpan.start;
+
+      let currentAngle = familySpan.start;
+      return children.map(child => {
+        const weight = Math.max(child.descendantCount + 1, MIN_WEIGHT);
+        const angleDegrees = (weight / totalWeight) * spanDegrees;
+        const result = {
+          ...child,
+          startAngle: currentAngle,
+          endAngle: currentAngle + angleDegrees
+        };
+        currentAngle += angleDegrees;
+        return result;
+      });
+    }
+
+    // Group by parentFamilyId and calculate angles
+    const familyGroups = {};
+    gen2Data.forEach(child => {
+      if (!familyGroups[child.parentFamilyId]) {
+        familyGroups[child.parentFamilyId] = [];
+      }
+      familyGroups[child.parentFamilyId].push(child);
+    });
+
+    // Build final gen2Children array with calculated angles
+    const gen2Children = [];
+    Object.keys(familyGroups).forEach(familyId => {
+      const span = familySpans[familyId];
+      const childrenWithAngles = calculateWeightedAngles(familyGroups[familyId], span);
+      gen2Children.push(...childrenWithAngles);
+    });
+
+    // Add Gen 2 people and their spouses to searchable array
+    gen2Children.forEach(child => {
+      allPeople.push({ id: child.id, name: child.name, generation: 2 });
+      child.spouses.forEach(spouse => {
+        allPeople.push({ id: child.id, name: spouse.name, generation: 2 });
+      });
+    });
+
+    // Draw filled ring for Gen 2
+    const gen2Arc = d3.arc()
+      .innerRadius(gen2Inner)
+      .outerRadius(gen2Outer);
+
+    g.append("path")
+      .attr("d", gen2Arc({ startAngle: 0, endAngle: 2 * Math.PI }))
+      .attr("fill", genColors[2])
+      .attr("stroke", "#1a2e1e")
+      .attr("stroke-width", 2);
+
+    // Draw wedge dividers for Gen 2
+    gen2Children.forEach(child => {
+      const startRad = (child.startAngle - 90) * Math.PI / 180;
+
+      // Draw divider line at start of each wedge
+      const x1 = Math.cos(startRad) * gen2Inner;
+      const y1 = Math.sin(startRad) * gen2Inner;
+      const x2 = Math.cos(startRad) * gen2Outer;
+      const y2 = Math.sin(startRad) * gen2Outer;
+
+      g.append("line")
+        .attr("x1", x1)
+        .attr("y1", y1)
+        .attr("x2", x2)
+        .attr("y2", y2)
+        .attr("stroke", "#1a2e1e")
+        .attr("stroke-width", 1);
+    });
+
+    // ── GEN 2 NAMES ──
+    // TODO: Implement tangential stacked text for narrow wedges
+    // Challenge: Need to figure out how to stack multiple lines of tangential text
 
     // Scroll to center on load
     window.addEventListener('load', () => {
