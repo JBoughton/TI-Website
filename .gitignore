@@ -1,0 +1,14 @@
+# Planning docs (private)
+PLANNING.md
+
+# Claude Code local files
+.claude/
+
+# OS files
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+.vscode/
+.idea/
