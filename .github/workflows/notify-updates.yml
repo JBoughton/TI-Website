@@ -31,7 +31,7 @@ jobs:
           username: ${{ secrets.GMAIL_USERNAME }}
           password: ${{ secrets.GMAIL_APP_PASSWORD }}
           subject: "Treasure Island Website Updated"
-          to: jillbo323@gmail.com
+          to: jillbo323@gmail.com, boughtonbd@gmail.com
           from: Treasure Island Website <boughtonbd@gmail.com>
           body: |
             Hi Mom!
@@ -43,4 +43,3 @@ jobs:
             View the site: https://ti-website-one.vercel.app
 
             - Ben (via automated update)
-          content_type: text/plain
