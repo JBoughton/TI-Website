@@ -123,28 +123,37 @@
       .nav-links li:last-child a { border-bottom: none; }
     }
 
-    /* ── COMING SOON ── */
-    .coming-soon {
-      min-height: calc(100vh - 60px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+    /* ── BOOKING SECTION ── */
+    .booking-section {
+      max-width: 800px;
+      margin: 0 auto;
       padding: 3rem 1.5rem;
+      text-align: center;
     }
 
-    .coming-soon h1 {
+    .booking-section h1 {
       font-family: 'Playfair Display', serif;
       font-size: clamp(2rem, 5vw, 3rem);
       color: var(--green-dark);
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
     }
 
-    .coming-soon p {
+    .booking-intro {
       font-size: 1.1rem;
       color: var(--text-mid);
       font-weight: 300;
+      margin-bottom: 2rem;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .form-container iframe {
+      display: block;
     }
 
     /* ── FOOTER ── */
@@ -177,9 +186,20 @@
     </ul>
   </nav>
 
-  <section class="coming-soon">
+  <section class="booking-section">
     <h1>Book Your Stay</h1>
-    <p>Coming Soon!</p>
+    <p class="booking-intro">Ready to schedule your time at camp? Fill out the form below.</p>
+    <div class="form-container">
+      <iframe
+        src="https://docs.google.com/forms/d/e/1FAIpQLSeH4nEZJ3YdPRzHRPKoAm62lNQqv_b6oBiIFKpfaUkGhAxMIA/viewform?embedded=true"
+        width="100%"
+        height="800"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0">
+        Loading…
+      </iframe>
+    </div>
   </section>
 
   <footer>
