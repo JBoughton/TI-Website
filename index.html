@@ -171,6 +171,67 @@
       font-style: italic;
     }
 
+    .slideshow-counter {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-family: 'Lato', sans-serif;
+    }
+
+    .slideshow-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .slideshow-controls button {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--cream);
+      padding: 0.6rem 1.2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.9rem;
+      transition: background 0.2s ease;
+    }
+
+    .slideshow-controls button:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .slideshow-cta {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: var(--cream);
+      opacity: 0.85;
+    }
+
+    .slideshow-cta a {
+      color: var(--amber);
+      text-decoration: none;
+    }
+
+    .slideshow-cta a:hover {
+      text-decoration: underline;
+    }
+
+    .slideshow-photo-caption {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: var(--cream);
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      min-height: 1.5em;
+    }
+
     /* ── CENTENNIAL BAND ── */
     .centennial-band {
       background: var(--green-dark);
@@ -378,8 +439,17 @@
     <h2>A Century of Memories</h2>
     <div class="slideshow-container" id="slideshow">
       <!-- Images loaded by JavaScript -->
+      <div class="slideshow-counter" id="counter">1 / 48</div>
     </div>
-    <p class="slideshow-caption">Photos cycle every 10 seconds</p>
+    <p class="slideshow-photo-caption" id="photoCaption"></p>
+    <div class="slideshow-controls">
+      <button id="prevBtn">&#8592; Prev</button>
+      <button id="pauseBtn">Pause</button>
+      <button id="nextBtn">Next &#8594;</button>
+    </div>
+    <p class="slideshow-cta">
+      Have photos to share? Email them to <a href="mailto:treasureislandcamp@gmail.com">treasureislandcamp@gmail.com</a>
+    </p>
   </section>
 
   <section class="centennial-band">
@@ -397,78 +467,110 @@
   </footer>
 
   <script>
-    // Photo slideshow - Grammie's photo first, then rest in order
-    const photos = [
-      "Grammie - 90th bday - 1962 - Happy.jpg",
-      "10-TI Camp - Grammie looking out of Tea Tray.jpg",
-      "2008 TI WW.JPG",
-      "2009 TI Camp Party in Cincinnati - November.JPG",
-      "2010 TI Camp Party in Cincinnati - November.JPG",
-      "2012 TI WW.JPG",
-      "2014 TI WW.JPG",
-      "2015 TI Camp Party in Cincinnati - November.JPG",
-      "2015 TI WW-2.JPG",
-      "2015 TI WW.JPG",
-      "2016 TI WW.JPG",
-      "2017 TI WW.JPG",
-      "2018 TI WW.JPG",
-      "2022 - Treasure Island Aerial View with Cabins Labeled..JPG",
-      "4e0cf2d93e8c7957a18fd914d3ef3f92.jpeg",
-      "787188812.135125.jpg",
-      "787204360.068805.jpg",
-      "8-25-05 Canada sunset 124 (1).JPG",
-      "8-30-05 Canada Gordon_s Bay & sunset 076 (1) - from Nancy Kurlin.jpg",
-      "Aerial View of TI Camp Islands Labeled.JPG",
-      "Cottage Life Cover -  Coming Home to Treasure Island - March 1993 (2).jpg",
-      "Grammie - 90th bday - 1962 - with Many Great Grandchildren - Pre Sarah Boughton Holt.jpg",
-      "IMG_1420.jpg",
-      "IMG_1425.jpg",
-      "IMG_1879.JPG",
-      "IMG_4460.JPG",
-      "IMG_5736.jpg",
-      "IMG_5754.jpg",
-      "May 2010 TI WW Group Photo.JPG",
-      "May 2011 TI WW Group Photo.JPG",
-      "Pat Kelly Drone photo of Treasure.JPG",
-      "Pijiki Bay Drone Photo.JPG",
-      "RD Drone - Directly above Kyoshk.jpg",
-      "RD Drone Kyoshk - Pijiki - TI - 2.jpg",
-      "RD Drone Kyoshk - Pijiki - TI.jpg",
-      "RP de Haan Aerial Photo.jpeg",
-      "RP de Haan Aerial Photo2.jpeg",
-      "TI Camp Work Weekend 2010 - Treasure Island - Crew works on repair of bridge -2.JPG",
-      "Ti Family - Treasure Regatta - about 1999 - Awards - Joe Boughton - Dave Boughton- Sarah Holt- Fifi McCaslin - Betsy Kurlin.jpg",
-      "Ti Family - Treasure Regatta - about 1999 - Front Dock.jpg",
-      "TI Work Weekend Crew - May - June 2022.jpg",
-      "TIWWMA~1.JPG",
-      "TREASU~1.JPG",
-      "Treasure Island -The Beautiful Flags of Treasure Island - May 2019.jpg",
-      "Treasure Island Party - Nov 2013.jpg",
-      "Treasure Island Regatta Ceremony at TI Front dock - 2007.JPG",
-      "Treasure Island Regatta fun at TI Front dock - 2006.JPG",
-      "West Bay.jpg"
-    ];
-
     const basePath = "images/ti_photos_landing_page/";
     const container = document.getElementById("slideshow");
+    const counter = document.getElementById("counter");
+    const captionEl = document.getElementById("photoCaption");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    let photos = [];
     let currentIndex = 0;
+    let isPaused = false;
+    let intervalId;
+    let images;
 
-    // Create all image elements
-    photos.forEach((photo, index) => {
-      const img = document.createElement("img");
-      img.src = basePath + encodeURIComponent(photo);
-      img.alt = "Treasure Island Camp memory";
-      if (index === 0) img.classList.add("active");
-      container.appendChild(img);
+    // Load photos from JSON
+    fetch(basePath + "photos.json")
+      .then(response => response.json())
+      .then(data => {
+        photos = data.photos;
+        initSlideshow();
+      });
+
+    function initSlideshow() {
+      // Create all image elements
+      photos.forEach((photo, index) => {
+        const img = document.createElement("img");
+        img.src = basePath + encodeURIComponent(photo.file);
+        img.alt = photo.caption || "Treasure Island Camp memory";
+        if (index === 0) img.classList.add("active");
+        container.appendChild(img);
+      });
+
+      images = container.querySelectorAll("img");
+      updateCounter();
+      updateCaption();
+      startAutoPlay();
+    }
+
+    function formatCaption(photo) {
+      if (!photo.caption && !photo.year) return "";
+      let text = photo.caption || "";
+      if (photo.year) {
+        text = text ? text + " (" + photo.year + ")" : photo.year;
+      }
+      return text;
+    }
+
+    function updateCaption() {
+      captionEl.textContent = formatCaption(photos[currentIndex]);
+    }
+
+    function updateCounter() {
+      counter.textContent = (currentIndex + 1) + " / " + photos.length;
+    }
+
+    function goToSlide(newIndex) {
+      images[currentIndex].classList.remove("active");
+      currentIndex = (newIndex + photos.length) % photos.length;
+      images[currentIndex].classList.add("active");
+      updateCounter();
+      updateCaption();
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+    }
+
+    function startAutoPlay() {
+      intervalId = setInterval(nextSlide, 10000);
+    }
+
+    function stopAutoPlay() {
+      clearInterval(intervalId);
+    }
+
+    // Event listeners
+    pauseBtn.addEventListener("click", () => {
+      isPaused = !isPaused;
+      pauseBtn.textContent = isPaused ? "Play" : "Pause";
+      if (isPaused) {
+        stopAutoPlay();
+      } else {
+        startAutoPlay();
+      }
     });
 
-    // Cycle through photos every 10 seconds
-    setInterval(() => {
-      const images = container.querySelectorAll("img");
-      images[currentIndex].classList.remove("active");
-      currentIndex = (currentIndex + 1) % images.length;
-      images[currentIndex].classList.add("active");
-    }, 10000);
+    prevBtn.addEventListener("click", () => {
+      prevSlide();
+      if (!isPaused) {
+        stopAutoPlay();
+        startAutoPlay();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      nextSlide();
+      if (!isPaused) {
+        stopAutoPlay();
+        startAutoPlay();
+      }
+    });
   </script>
 
 </body>
