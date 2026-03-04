@@ -6,7 +6,7 @@
   <title>Family - Treasure Island Camp</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -206,11 +206,23 @@
       height: 2000,
       centerX: 1000,
       centerY: 1000,
-      centerRadius: 120,
+      centerRadius: 160,
       ringWidth: 140,
       fontSize: 14,
       centerFontSize: 16
     };
+
+    // Light pastel colors at 60% opacity
+    const genColors = [
+      "rgba(135, 206, 235, 0.6)", // Gen 0 (center) - Sky blue
+      "rgba(255, 215, 100, 0.6)", // Gen 1 - Gold
+      "rgba(255, 100, 100, 0.6)", // Gen 2 - Light red
+      "rgba(152, 251, 152, 0.6)", // Gen 3 - Pale green
+      "rgba(200, 162, 200, 0.6)", // Gen 4 - Lavender
+      "rgba(255, 160, 122, 0.6)", // Gen 5 - Light coral
+      "rgba(127, 255, 212, 0.6)", // Gen 6 - Aquamarine
+      "rgba(240, 230, 140, 0.6)"  // Gen 7+ - Khaki/pale yellow
+    ];
 
     // Generation 1 children in clockwise order from top-right
     // spouses array: order matters (first marriage first)
@@ -246,15 +258,15 @@
     // ══════════════════════════════════════════════
     g.append("circle")
       .attr("r", config.centerRadius)
-      .attr("fill", "none")
+      .attr("fill", genColors[0])
       .attr("stroke", "#1a2e1e")
       .attr("stroke-width", 2);
 
-    // Center text
+    // Center text - Cinzel font for founding ancestors
     g.append("text")
       .attr("y", -12)
       .attr("text-anchor", "middle")
-      .attr("font-family", "Playfair Display, serif")
+      .attr("font-family", "Cinzel, serif")
       .attr("font-size", config.centerFontSize)
       .attr("font-weight", "bold")
       .attr("fill", "#1a2e1e")
@@ -272,7 +284,7 @@
     g.append("text")
       .attr("y", 24)
       .attr("text-anchor", "middle")
-      .attr("font-family", "Playfair Display, serif")
+      .attr("font-family", "Cinzel, serif")
       .attr("font-size", config.centerFontSize)
       .attr("font-weight", "bold")
       .attr("fill", "#1a2e1e")
@@ -284,17 +296,17 @@
     const gen1Inner = config.centerRadius;
     const gen1Outer = config.centerRadius + config.ringWidth;
 
-    // Outer circle for Gen 1
-    g.append("circle")
-      .attr("r", gen1Outer)
-      .attr("fill", "none")
-      .attr("stroke", "#1a2e1e")
-      .attr("stroke-width", 2);
-
     // Arc generator for wedges
     const arc = d3.arc()
       .innerRadius(gen1Inner)
       .outerRadius(gen1Outer);
+
+    // Draw filled ring for Gen 1
+    g.append("path")
+      .attr("d", arc({ startAngle: 0, endAngle: 2 * Math.PI }))
+      .attr("fill", genColors[1])
+      .attr("stroke", "#1a2e1e")
+      .attr("stroke-width", 2);
 
     // Draw wedges and labels for Gen 1
     gen1Children.forEach(child => {
@@ -303,7 +315,7 @@
       const startRad = (child.startAngle - 90) * Math.PI / 180;
       const endRad = (child.endAngle - 90) * Math.PI / 180;
 
-      // Draw divider line at start of wedge
+      // Draw divider line at start of wedge (full height)
       const lineAngle = startRad;
       const x1 = Math.cos(lineAngle) * gen1Inner;
       const y1 = Math.sin(lineAngle) * gen1Inner;
@@ -318,29 +330,22 @@
         .attr("stroke", "#1a2e1e")
         .attr("stroke-width", 1);
 
-      // Calculate center angle for text placement
+      // Calculate center angle for blood relative text (full wedge width)
       const midAngle = (startRad + endRad) / 2;
       const textRadius = (gen1Inner + gen1Outer) / 2;
-      const textX = Math.cos(midAngle) * textRadius;
-      const textY = Math.sin(midAngle) * textRadius;
 
       // Calculate rotation for radial text
-      // Text should be readable (not upside down)
       let rotation = (midAngle * 180 / Math.PI) + 90;
-
-      // Flip text on bottom half so it's readable
       const isFlipped = midAngle > 0 && midAngle < Math.PI;
       if (isFlipped) {
         rotation += 180;
       }
 
-      // Blood relative ALWAYS closest to center (negative offset = toward center)
-      // Spouse ALWAYS furthest from center (positive offset = toward outer edge)
-      // Text rotation handles readability, but radial position stays consistent
-      const bloodRelativeOffset = -18;
+      // Blood relative ALWAYS closest to center
+      const bloodRelativeOffset = -40;
       const spouseOffset = 18;
 
-      // Richardson child name (closest to center/previous generation)
+      // Richardson child name (closest to center/previous generation) - full wedge width
       const nameX = Math.cos(midAngle) * (textRadius + bloodRelativeOffset);
       const nameY = Math.sin(midAngle) * (textRadius + bloodRelativeOffset);
 
@@ -351,37 +356,84 @@
         .attr("dominant-baseline", "middle")
         .attr("font-family", "Playfair Display, serif")
         .attr("font-size", config.fontSize)
+        .attr("font-weight", "bold")
         .attr("fill", "#1a2e1e")
         .attr("transform", `rotate(${rotation}, ${nameX}, ${nameY})`)
         .text(child.name);
 
-      // "m." in italics (middle)
-      g.append("text")
-        .attr("x", textX)
-        .attr("y", textY)
-        .attr("text-anchor", "middle")
-        .attr("dominant-baseline", "middle")
-        .attr("font-family", "Playfair Display, serif")
-        .attr("font-size", config.fontSize - 2)
-        .attr("font-style", "italic")
-        .attr("fill", "#1a2e1e")
-        .attr("transform", `rotate(${rotation}, ${textX}, ${textY})`)
-        .text("m.");
+      // Handle spouse(s) - subdivide wedge if multiple marriages
+      const numSpouses = child.spouses.length;
+      const wedgeSpan = endRad - startRad;
+      const subWedgeSpan = wedgeSpan / numSpouses;
 
-      // Spouse name (furthest from center)
-      const spouseX = Math.cos(midAngle) * (textRadius + spouseOffset);
-      const spouseY = Math.sin(midAngle) * (textRadius + spouseOffset);
+      child.spouses.forEach((spouse, index) => {
+        // Calculate this spouse's sub-wedge angles
+        // When text is flipped (bottom half), reverse order so first spouse is visually on left
+        const adjustedIndex = isFlipped ? (numSpouses - 1 - index) : index;
+        const subStart = startRad + (adjustedIndex * subWedgeSpan);
+        const subEnd = subStart + subWedgeSpan;
+        const subMidAngle = (subStart + subEnd) / 2;
 
-      g.append("text")
-        .attr("x", spouseX)
-        .attr("y", spouseY)
-        .attr("text-anchor", "middle")
-        .attr("dominant-baseline", "middle")
-        .attr("font-family", "Playfair Display, serif")
-        .attr("font-size", config.fontSize)
-        .attr("fill", "#1a2e1e")
-        .attr("transform", `rotate(${rotation}, ${spouseX}, ${spouseY})`)
-        .text(child.spouses[0].name);
+        // Draw vertical divider line(s) between sub-wedges (only once, on first iteration)
+        if (index === 0 && numSpouses > 1) {
+          for (let i = 1; i < numSpouses; i++) {
+            const dividerAngle = startRad + (i * subWedgeSpan);
+            // Divider starts at the "m." level and goes to outer edge
+            const dividerInner = textRadius - 5;
+            const dx1 = Math.cos(dividerAngle) * dividerInner;
+            const dy1 = Math.sin(dividerAngle) * dividerInner;
+            const dx2 = Math.cos(dividerAngle) * gen1Outer;
+            const dy2 = Math.sin(dividerAngle) * gen1Outer;
+
+            g.append("line")
+              .attr("x1", dx1)
+              .attr("y1", dy1)
+              .attr("x2", dx2)
+              .attr("y2", dy2)
+              .attr("stroke", "#1a2e1e")
+              .attr("stroke-width", 1);
+          }
+        }
+
+        // Calculate rotation for this sub-wedge's text
+        let subRotation = (subMidAngle * 180 / Math.PI) + 90;
+        const subIsFlipped = subMidAngle > 0 && subMidAngle < Math.PI;
+        if (subIsFlipped) {
+          subRotation += 180;
+        }
+
+        // "m." in italics (middle of sub-wedge)
+        const mX = Math.cos(subMidAngle) * textRadius;
+        const mY = Math.sin(subMidAngle) * textRadius;
+
+        g.append("text")
+          .attr("x", mX)
+          .attr("y", mY)
+          .attr("text-anchor", "middle")
+          .attr("dominant-baseline", "middle")
+          .attr("font-family", "Playfair Display, serif")
+          .attr("font-size", config.fontSize - 2)
+          .attr("font-style", "italic")
+          .attr("fill", "#1a2e1e")
+          .attr("transform", `rotate(${subRotation}, ${mX}, ${mY})`)
+          .text("m.");
+
+        // Spouse name (furthest from center, in sub-wedge)
+        const spouseX = Math.cos(subMidAngle) * (textRadius + spouseOffset);
+        const spouseY = Math.sin(subMidAngle) * (textRadius + spouseOffset);
+
+        g.append("text")
+          .attr("x", spouseX)
+          .attr("y", spouseY)
+          .attr("text-anchor", "middle")
+          .attr("dominant-baseline", "middle")
+          .attr("font-family", "Playfair Display, serif")
+          .attr("font-size", config.fontSize)
+          .attr("font-weight", "bold")
+          .attr("fill", "#1a2e1e")
+          .attr("transform", `rotate(${subRotation}, ${spouseX}, ${spouseY})`)
+          .text(spouse.name);
+      });
     });
 
     // Scroll to center on load

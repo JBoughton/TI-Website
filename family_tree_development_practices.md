@@ -52,6 +52,26 @@ Primary data source: `data/Richardson Family Circle Data.rmgc` (SQLite database 
 
 ---
 
+## Color Ramp Options (for generation coloring)
+
+**Option 1: Forest depth** (selected)
+- Center → outer: Deep forest → emerald → teal → sage → seafoam → mint
+- Stays in green/nature family, extends naturally, on-brand with camp theme
+
+**Option 2: Earth to sky**
+- Center → outer: Deep brown → terracotta → amber → sage → sky blue → lavender
+- Grounds ancestors in earth, newer generations reach toward sky
+
+**Option 3: Cool to warm**
+- Center → outer: Deep navy → indigo → purple → magenta → coral → gold
+- Classic, very extensible, works well with white text
+
+**Option 4: Categorical**
+- Use a palette like D3's Tableau10 - each generation is a completely different hue
+- Maximum distinction, but less "ramp" feeling
+
+---
+
 ## Questions to Clarify
 
 1. **Divorcees/Remarriages:** How should we handle Coombs (divorced Henry LaBoiteaux, remarried)? Show both spouses? Show only current? Special notation?
